@@ -361,8 +361,6 @@
       z-index: 20;
       pointer-events: all;
     }
-
-    /* ===== GAME OVER ===== */
     #gameOverScreen { background: rgba(3,6,15,0.95); }
 
     .game-over-title {
@@ -470,46 +468,20 @@
 
     .btn-row { display: flex; gap: 12px; justify-content: center; }
 
-    /* ===== LANDSCAPE LOCK ===== */
-    #rotateMsg {
-      display: none;
+    /* Touch zone vertical: zona inferior para controlar paleta */
+    .touch-zone {
       position: fixed;
-      inset: 0;
-      background: var(--dark);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 20px;
-      text-align: center;
-      padding: 40px;
-    }
-
-    .rotate-icon {
-      font-size: 64px;
-      animation: rotateAnim 2s ease-in-out infinite;
-    }
-
-    @keyframes rotateAnim {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(90deg); }
-    }
-
-    @media (orientation: portrait) {
-      #rotateMsg { display: flex; }
+      left: 0; right: 0;
+      height: 35%;
+      bottom: 0;
+      z-index: 20;
+      pointer-events: all;
     }
   </style>
 </head>
 <body>
 
-<!-- Rotate message for portrait -->
-<div id="rotateMsg">
-  <div class="rotate-icon">📱</div>
-  <div class="logo-main" style="font-size:32px">KAPUCHI PONG</div>
-  <p style="font-family:'Share Tech Mono';font-size:13px;letter-spacing:3px;color:rgba(0,245,255,0.6)">
-    GIRA TU DISPOSITIVO<br>PARA JUGAR
-  </p>
-</div>
+
 
 <!-- Particles -->
 <canvas id="particlesCanvas"></canvas>
