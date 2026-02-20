@@ -225,16 +225,16 @@
 
     .lobby-box {
       text-align: center;
-      padding: 40px;
+      padding: 24px 20px;
       border: 1px solid rgba(0,245,255,0.15);
       background: rgba(0,245,255,0.03);
-      width: min(90vw, 400px);
+      width: min(95vw, 400px);
     }
 
     .room-code-display {
-      font-size: 52px;
+      font-size: clamp(36px, 12vw, 52px);
       font-weight: 900;
-      letter-spacing: 12px;
+      letter-spacing: clamp(4px, 3vw, 12px);
       background: linear-gradient(135deg, var(--cyan), var(--magenta));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -242,6 +242,8 @@
       filter: drop-shadow(0 0 15px rgba(0,245,255,0.5));
       margin: 20px 0;
       animation: pulse 2s ease-in-out infinite;
+      word-break: break-all;
+      text-align: center;
     }
 
     @keyframes pulse {
