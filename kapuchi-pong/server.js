@@ -24,7 +24,7 @@ function generateRoomCode() {
 
 function createGameState() {
   return {
-    ball: { x: 50, y: 50, vx: 3, vy: 3, speed: 3 },
+    ball: { x: 50, y: 50, vx: 1.5, vy: 1.5, speed: 1.5 },
     paddles: {
       player1: { x: 50, y: 92, width: 18, score: 0 },
       player2: { x: 50, y: 8, width: 18, score: 0 }
@@ -61,7 +61,7 @@ function gameTick(roomCode) {
     if (ball.x >= p1.x - p1.width / 2 && ball.x <= p1.x + p1.width / 2) {
       ball.y = p1.y - PADDLE_HEIGHT / 2 - BALL_RADIUS;
       const offset = (ball.x - p1.x) / (p1.width / 2);
-      ball.speed = Math.min(ball.speed + 0.3, 10);
+      ball.speed = Math.min(ball.speed + 0.15, 5);
       ball.vx = offset * ball.speed * 0.8;
       ball.vy = -ball.speed;
     }
@@ -72,7 +72,7 @@ function gameTick(roomCode) {
     if (ball.x >= p2.x - p2.width / 2 && ball.x <= p2.x + p2.width / 2) {
       ball.y = p2.y + PADDLE_HEIGHT / 2 + BALL_RADIUS;
       const offset = (ball.x - p2.x) / (p2.width / 2);
-      ball.speed = Math.min(ball.speed + 0.3, 10);
+      ball.speed = Math.min(ball.speed + 0.15, 5);
       ball.vx = offset * ball.speed * 0.8;
       ball.vy = ball.speed;
     }
@@ -99,9 +99,9 @@ function gameTick(roomCode) {
 function resetBall(state, direction) {
   state.ball.x = 50;
   state.ball.y = 50;
-  state.ball.speed = 3;
-  state.ball.vx = (Math.random() - 0.5) * 4;
-  state.ball.vy = direction * 3;
+  state.ball.speed = 1.5;
+  state.ball.vx = (Math.random() - 0.5) * 2;
+  state.ball.vy = direction * 1.5;
 }
 
 function checkWinner(roomCode) {
