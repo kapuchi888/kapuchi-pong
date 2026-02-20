@@ -579,6 +579,20 @@
 
   <!-- Touch zone for paddle control -->
   <div class="touch-zone" id="touchZone"></div>
+
+  <!-- Pause overlay after goal -->
+  <div id="pauseOverlay" style="
+    display:none; position:fixed; inset:0; z-index:50;
+    background:rgba(3,6,15,0.85);
+    flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  ">
+    <div id="pauseScorer" style="font-size:14px;letter-spacing:4px;color:var(--yellow);text-shadow:0 0 10px var(--yellow)"></div>
+    <div id="pauseScore" style="font-size:48px;font-weight:900;letter-spacing:8px;color:var(--cyan);text-shadow:0 0 20px var(--cyan)"></div>
+    <div id="pauseTap" style="font-size:11px;letter-spacing:3px;color:rgba(0,245,255,0.6);animation:pulse 1.2s ease-in-out infinite">
+      TOCA LA PANTALLA PARA CONTINUAR
+    </div>
+    <div id="pauseVotes" style="font-size:10px;letter-spacing:2px;color:rgba(0,245,255,0.35)"></div>
+  </div>
 </div>
 
 <!-- ===== GAME OVER ===== -->
@@ -702,6 +716,35 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
+// ==============================
+// PAUSE OVERLAY
+// ==============================
+let myReadyVoted = false;
+
+function showPauseOverlay() {
+  document.getElementById('pauseOverlay').style.display = 'flex';
+}
+
+function hidePauseOverlay() {
+  document.getElementById('pauseOverlay').style.display = 'none';
+  myReadyVoted = false;
+}
+
+function sendReadyVote() {
+  if (!myReadyVoted) {
+    myReadyVoted = true;
+    socket.emit('readyAfterGoal');
+    document.getElementById('pauseTap').textContent = '✓ LISTO — ESPERANDO AL OTRO JUGADOR';
+  }
+}
+
+document.getElementById('pauseOverlay').addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  sendReadyVote();
+}, { passive: false });
+
+document.getElementById('pauseOverlay').addEventListener('click', sendReadyVote);
 
 // ==============================
 // MENU ACTIONS
@@ -857,8 +900,32 @@ socket.on('rematchVote', ({ votes }) => {
 socket.on('rematchStart', () => {
   document.getElementById('rematchInfo').textContent = '';
   lastState = null;
-  startGameLoop();
-  showScreen('countdownScreen');
+  lastP1Score = 0;
+  lastP2Score = 0;
+  hidePauseOverlay();
+  // countdown will follow from server
+});
+
+socket.on('goalPause', ({ scorer, scores }) => {
+  const iScored = (myRole === 'player1' && scorer === 'player1') ||
+                  (myRole === 'player2' && scorer === 'player2');
+  const myS  = myRole === 'player1' ? scores.p1 : scores.p2;
+  const oppS = myRole === 'player1' ? scores.p2 : scores.p1;
+
+  document.getElementById('pauseScorer').textContent = iScored ? '¡PUNTO PARA TI!' : '¡PUNTO DEL OPONENTE!';
+  document.getElementById('pauseScorer').style.color = iScored ? 'var(--cyan)' : 'var(--magenta)';
+  document.getElementById('pauseScore').textContent  = `${myS} — ${oppS}`;
+  document.getElementById('pauseVotes').textContent  = '0/2 listos';
+  showPauseOverlay();
+  myReadyVoted = false;
+});
+
+socket.on('readyVotes', ({ votes }) => {
+  document.getElementById('pauseVotes').textContent = `${votes}/2 listos`;
+});
+
+socket.on('resumeGame', () => {
+  hidePauseOverlay();
 });
 
 socket.on('leaderboard', (lb) => {
